@@ -167,7 +167,7 @@ describe('JettonWallet', () => {
         });
     });
 
-    it.skip('wallet owner should be able to send jettons', async () => {
+    it('wallet owner should be able to send jettons', async () => {
         const deployerJettonWallet = await userWallet(deployer.address);
         let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
         let initialTotalSupply = await jettonMinter.getTotalSupply();
@@ -175,6 +175,14 @@ describe('JettonWallet', () => {
         let initialJettonBalance2 = await notDeployerJettonWallet.getJettonBalance();
         let sentAmount = toNano('0.5');
         let forwardAmount = toNano('0.05');
+        let fee = sentAmount / 20n;
+
+        console.log({
+            deployer,
+            
+        })
+
+
         const sendResult = await deployerJettonWallet.sendTransfer(deployer.getSender(), toNano('0.1'), //tons
                sentAmount, notDeployer.address,
                deployer.address, null, forwardAmount, null);
@@ -188,7 +196,7 @@ describe('JettonWallet', () => {
             value: forwardAmount
         });
         expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance - sentAmount);
-        expect(await notDeployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance2 + sentAmount);
+        expect(await notDeployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance2 + sentAmount - fee);
         expect(await jettonMinter.getTotalSupply()).toEqual(initialTotalSupply);
     });
 
